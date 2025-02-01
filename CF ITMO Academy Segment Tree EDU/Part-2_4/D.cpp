@@ -13,17 +13,13 @@ struct segtree{
     segtree(ll sz){
         n = sz;
         tree.resize(4*sz, 0);
-        pre.resize(4*sz, 0);
-        suf.resize(4*sz, 0);
-        cnt.resize(4*sz, 0);
+        sum.resize(4*sz, 0);
         lazy.resize(4*sz, 0);
     }
 
     ll n;
     vector<ll> tree;
-    vector<ll> pre;
-    vector<ll> suf;
-    vector<ll> cnt;
+    vector<ll> sum;
     vector<ll> lazy;
 
     void push(ll i, ll l, ll r){
@@ -36,8 +32,8 @@ struct segtree{
         }
 
         ll len = r-l+1;
-        tree[i] += ((len*(len+1))/2)*lazy[i];
-        cnt[i] += len*lazy[i];
+        tree[i] += (l*len+(len*(len+1))/2)*lazy[i];
+        sum[i] += len*lazy[i];
         //tree[i] %= mod;
         lazy[i] = 0;
     }
@@ -60,8 +56,8 @@ struct segtree{
         build(i*2, l, mid, v);
         build(i*2+1, mid+1, r, v);
 
-        tree[i] = tree[i*2]+tree[i*2+1]+(mid-l+1)*cnt[i*2+1];
-        cnt[i] = cnt[i*2]+cnt[i*2+1];
+        tree[i] = tree[i*2]+tree[i*2+1];
+        sum[i] = sum[i*2]+sum[i*2+1];
 
         //tree[i] = combine(tree[i*2], tree[i*2+1]);
         //combineind(i, i<<1, (i<<1)|1, l, r);
@@ -82,8 +78,8 @@ struct segtree{
         update(i*2, l, mid, b, e, val);
         update(i*2+1, mid+1, r, b, e, val);
 
-        tree[i] = tree[i*2]+tree[i*2+1]+(mid-l+1)*cnt[i*2+1];
-        cnt[i] = cnt[i*2]+cnt[i*2+1];
+        tree[i] = tree[i*2]+tree[i*2+1];
+        sum[i] = sum[i*2]+sum[i*2+1];
         //tree[i] = combine(tree[i*2], tree[i*2+1]);
         //combineind(i, i*2, i*2+1);
     }
@@ -94,20 +90,15 @@ struct segtree{
     pair<ll, ll> query(ll i, ll l, ll r, ll b, ll e, ll val){
         push(i, l, r);
         if(b<=l and r<=e) {
-            return {tree[i], cnt[i]};
+            return {tree[i], sum[i]};
         }
-        if(e<l or r<b) return {0, 1e18};
+        if(e<l or r<b) return {0, 0};
 
         ll mid = (l+r)/2;
         auto pi1 = query(i*2, l, mid, b, e, val);
         auto pi2 = query(i*2+1, mid+1, r, b, e, val);
-        if(pi1.se==1e18) return pi2;
-        if(pi2.se==1e18) return pi1;
 
-        ll len = mid-max(l, b)+1;
-        pi1.fi += pi2.fi + pi2.se*len;
-        pi1.se += pi2.se;
-        return pi1;
+        return {pi1.fi+pi2.fi, pi1.se+pi2.se};
     }
     pair<ll, ll> Query(ll i, ll j, ll val){
         return query(1, 0, n-1, i, j, val);
@@ -142,6 +133,7 @@ void solve(ll cs){
             a--, b--;
             //cout << st.Query(a, b, 0) << endl;
             auto pi = st.Query(a, b, 0);
+            pi.fi -= a*pi.se;
             cout << pi.fi << endl;
         }
     }

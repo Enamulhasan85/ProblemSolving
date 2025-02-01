@@ -13,15 +13,11 @@ struct segtree{
     segtree(ll sz){
         n = sz;
         tree.resize(4*sz, 0);
-        ev.resize(4*sz, 0);
-        od.resize(4*sz, 0);
         lazy.resize(4*sz, 0);
     }
 
     ll n;
     vector<ll> tree;
-    vector<ll> ev;
-    vector<ll> od;
     vector<ll> lazy;
 
     void push(ll i, ll l, ll r){
@@ -30,9 +26,8 @@ struct segtree{
             lazy[i*2] += lazy[i];
             lazy[i*2+1] += lazy[i];
         }
-        tree[i] = lazy[i];
-        if(l%2) od[i] = lazy[i];
-        else ev[i] = lazy[i];
+        if(l%2) tree[i] = -lazy[i];
+        else tree[i] = lazy[i];
         lazy[i] = 0;
     }
 
@@ -50,10 +45,7 @@ struct segtree{
         ll mid = (l+r)/2;
         build(i*2, l, mid, v);
         build(i*2+1, mid+1, r, v);
-        //tree[i] = combine(tree[i*2], tree[i*2+1]);
-        //combineind(i, l, mid+1, i<<1, i<<1|1);
-        od[i] = od[i*2] + od[i*2+1];
-        ev[i] = ev[i*2] + ev[i*2+1];
+        tree[i] = tree[i*2] + tree[i*2+1];
     }
     void Build(vector<ll> &v){
         build(1, 0, n-1, v);
@@ -62,7 +54,6 @@ struct segtree{
     void update(ll i, ll l, ll r, ll b, ll e, ll val){
         push(i, l, r);
         if(b<=l and r<=e) {
-            //tree[i] += val;
             lazy[i] = val;
             push(i, l, r);
             return;
@@ -71,10 +62,7 @@ struct segtree{
         ll mid = (l+r)/2;
         update(i*2, l, mid, b, e, val);
         update(i*2+1, mid+1, r, b, e, val);
-        //tree[i] = combine(tree[i*2], tree[i*2+1]);
-        //combineind(i, i<<1, i<<1|1);
-        od[i] = od[i*2] + od[i*2+1];
-        ev[i] = ev[i*2] + ev[i*2+1];
+        tree[i] = combine(tree[i*2], tree[i*2+1]);
     }
     void Update(ll i, ll j, ll val){
         update(1, 0, n-1, i, j, val);
@@ -87,32 +75,10 @@ struct segtree{
         }
         if(e<l or r<b) return 0;
         ll mid = (l+r)/2;
-        //return combine(query(i*2, l, mid, b, e, val), query(i*2+1, mid+1, r, b, e, val));
+        return combine(query(i*2, l, mid, b, e, val), query(i*2+1, mid+1, r, b, e, val));
     }
     ll Query(ll i, ll j, ll val){
         return query(1, 0, n-1, i, j, val);
-    }
-
-
-    ll queryod(ll i, ll l, ll r, ll b, ll e, ll val){
-        push(i, l, r);
-        if(b<=l and r<=e) {
-            return od[i];
-        }
-        if(e<l or r<b) return 0;
-        ll mid = (l+r)/2;
-        return combine(queryod(i*2, l, mid, b, e, val), queryod(i*2+1, mid+1, r, b, e, val));
-    }
-
-
-    ll queryev(ll i, ll l, ll r, ll b, ll e, ll val){
-        push(i, l, r);
-        if(b<=l and r<=e) {
-            return ev[i];
-        }
-        if(e<l or r<b) return 0;
-        ll mid = (l+r)/2;
-        return combine(queryev(i*2, l, mid, b, e, val), queryev(i*2+1, mid+1, r, b, e, val));
     }
 };
 
@@ -143,9 +109,8 @@ void solve(ll cs){
         else{
             cin >> a >> b;
             a--, b--;
-            mn = st.queryod(1, 0, n-1, a, b, 0);
-            mn -= st.queryev(1, 0, n-1, a, b, 0);
-            if(a%2==0) mn *= -1;
+            mn = st.Query(a, b, 0);
+            if(a%2) mn *= -1;
             cout << mn << endl;
         }
     }
@@ -171,4 +136,4 @@ int main(){
         solve(cs++);
     }
 }
-
+ 

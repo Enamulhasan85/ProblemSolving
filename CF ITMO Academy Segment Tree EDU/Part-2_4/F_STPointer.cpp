@@ -87,14 +87,7 @@ struct node{
 void solve(ll cs){
     ll j, i, p, q, a, b, c, d, m, n, k, g, mn = 0, sum, mx = 0;
 
-    string s;
-
     cin >> n ;
-
-    //vector<ll> v(n);
-
-    //for(auto &x : v) cin >> x;
-
     node st = node(1, n);
 
     char ch;
@@ -111,23 +104,14 @@ void solve(ll cs){
         }
         cin >> ch;
     }
-    //cout << endl;
 }
 
 int main(){
     ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-    //seive(1e6+2);
-    //For getting input from input.txt file
-    //freopen("output3.txt", "r", stdin);
-
-    //Printing the Output to output.txt file
-    //freopen("output6.txt", "w", stdout);
 
     ll t = 1, cs = 1;
     //cin >> t;
     while(t--){
-        //string str;
-        //getline(cin, str);
         solve(cs++);
     }
 }

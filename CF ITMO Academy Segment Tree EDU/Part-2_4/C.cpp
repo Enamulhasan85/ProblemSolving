@@ -127,14 +127,8 @@ void solve(ll cs){
 
     cin >> q;
 
-    //vector<ll> v(n);
-    //for(auto &x : v) cin >> x;
-
-    n = 1e6;
+    n = 1e6+1;
     segtree st = segtree(n);
-
-    //st.Build(v);
-    //cin >> q;
 
     while(q--){
         //cin >> k;
@@ -151,27 +145,13 @@ void solve(ll cs){
 
         auto pi = st.Query(0, n-1, 0);
         cout << get<3>(pi) << " " << get<0>(pi) << endl;
-        /*
-        if(k==1) {
-            cin >> a >> b >> p >> d;
-            a--, b--;
-
-            st.Update(a, b, p, d);
-        }
-        else{
-            cin >> a;
-            a--;
-            cout << st.Query(a, a, 0) << endl;
-        }*/
     }
 
-    //cout << endl;
 
 }
 
 int main(){
     ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-    //seive(1e6+2);
     //For getting input from input.txt file
     //freopen("output3.txt", "r", stdin);
 

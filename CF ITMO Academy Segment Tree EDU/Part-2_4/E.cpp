@@ -23,15 +23,10 @@ struct segtree{
     vector<ll> mn;
     vector<ll> mx;
     vector<pair<ll, ll>> lazy;
-    //vector<vector<pair<ll, ll>>> lazy;
 
     void push(ll i, ll l, ll r){
         if(lazy[i].fi==-1) return;
         if(l!=r){
-            //lazy[i*2] += lazy[i];
-            //lazy[i*2] %= mod;
-            //lazy[i*2+1] += lazy[i];
-            //lazy[i*2+1] %= mod;
             if(lazy[i*2].fi==-1) {
                 lazy[i*2] = lazy[i];
             }
@@ -72,7 +67,6 @@ struct segtree{
             mx[i] = min(mx[i], lazy[i].se);
         }
 
-        //tree[i] %= mod;
         lazy[i] = {-1, -1};
     }
 
@@ -86,8 +80,6 @@ struct segtree{
 
     void build(ll i, ll l, ll r, vector<ll> &v){
         if(l==r) {
-            //lazy[i] = v[l];
-            //push(i, l, r);
             return;
         }
         ll mid = (l+r)/2;
@@ -124,7 +116,7 @@ struct segtree{
         update(1, 0, n-1, i, j, val, t);
     }
 
-    ll query(ll i, ll l, ll r, ll b, ll e, ll val){
+    ll query(ll i, ll l, ll r, ll b, ll e){
         push(i, l, r);
         if(b<=l and r<=e) {
             return mn[i];
@@ -132,40 +124,30 @@ struct segtree{
         if(e<l or r<b) return -1;
 
         ll mid = (l+r)/2;
-        auto pi1 = query(i*2, l, mid, b, e, val);
-        auto pi2 = query(i*2+1, mid+1, r, b, e, val);
+        auto pi1 = query(i*2, l, mid, b, e);
+        auto pi2 = query(i*2+1, mid+1, r, b, e);
         if(pi1==-1) return pi2;
         else return pi1;
     }
-    ll Query(ll i, ll j, ll val){
-        return query(1, 0, n-1, i, j, val);
+    ll Query(ll i, ll j){
+        return query(1, 0, n-1, i, j);
     }
 };
 
 void solve(ll cs){
     ll j, i, p, q, a, b, c, d, m, n, k, g, mn = 0, sum, mx = 0;
 
-    string s;
-
     cin >> n >> q;
-
-    //vector<ll> v(n);
-    //for(auto &x : v) cin >> x;
-
     segtree st = segtree(n);
-
     //st.Build(v);
     //cin >> q;
-
     while(q--){
         cin >> k >> a >> b >> p;
-
         st.Update(a, b, p, k);
-
     }
 
     for(i=0;i<n;i++){
-        cout << st.Query(i, i, 0) << endl;
+        cout << st.Query(i, i) << endl;
     }
     //cout << endl;
 
@@ -173,18 +155,10 @@ void solve(ll cs){
 
 int main(){
     ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-    //seive(1e6+2);
-    //For getting input from input.txt file
-    //freopen("output3.txt", "r", stdin);
-
-    //Printing the Output to output.txt file
-    //freopen("output6.txt", "w", stdout);
 
     ll t=1, cs=1;
     //cin >> t;
     while(t--){
-        //string str;
-        //getline(cin, str);
         solve(cs++);
     }
 }
